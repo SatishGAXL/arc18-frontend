@@ -2,7 +2,7 @@
 
 This project provides a frontend interface for interacting with the ARC18 smart contract on Algorand, specifically focused on NFT trading with automatic royalty distribution.
 
-Deployed at [Github Pages]()
+Deployed at [Github Pages](https://satishgaxl.github.io/arc18-frontend/dist/)
 
 ## Overview
 
@@ -54,15 +54,21 @@ VITE_ARC18_APP_ADDRESS="your_arc18_app_address"
    - Account is automatically funded with test tokens
    - View account details and balance
 
+   ![Account Creation](flow_images/seller1.png)
+
 2. **NFT Minting**
    - Mint a new NFT with ARC18 compliance
    - NFT is automatically created with clawback address set to ARC18 contract
    - View minted NFT details including Asset ID
 
+   ![NFT Minting](flow_images/seller2.png)
+
 3. **Order Placement**
    - Enter buyer's address to authorize NFT purchase
    - Place order by calling ARC18 contract
    - View order confirmation and details
+
+   ![Order Placement](flow_images/seller3.png)
 
 ### Buyer Perspective
 
@@ -71,16 +77,22 @@ VITE_ARC18_APP_ADDRESS="your_arc18_app_address"
    - Account is automatically funded with test tokens
    - View account details and balance
 
+   ![Account Creation](flow_images/buyer1.png)
+
 2. **Order Details**
    - Enter Asset ID and seller's address
    - Fetch and verify offer details
    - View royalty information and payment requirements
+
+   ![Order Details](flow_images/buyer2.png)
 
 3. **Purchase Process**
    - View pre-purchase balances of all parties
    - Enter payment amount
    - Execute purchase transaction
    - View post-purchase balances showing royalty distribution
+
+   ![Purchase Process](flow_images/buyer3.png)
 
 ## Features
 
