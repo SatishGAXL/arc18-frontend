@@ -13,21 +13,24 @@ import {
   ARC18_APP_ID,
 } from "./config";
 
+// Seller component
 export const Seller = () => {
-  const [current, setCurrent] = useState(0);
+  // State variables
+  const [current, setCurrent] = useState(0); // Current step in the selling process
   const [account, setAccount] = useState<algosdk.Account | undefined>(
     undefined
-  );
-  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
-  const [balance, setBalance] = useState<number>(0);
-  const [assetId, setAssetId] = useState<number | undefined>(undefined);
-  const [isMinting, setIsMinting] = useState(false);
+  ); // Algorand account of the seller
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false); // Flag to indicate if an account is being created
+  const [balance, setBalance] = useState<number>(0); // Balance of the seller's account
+  const [assetId, setAssetId] = useState<number | undefined>(undefined); // Asset ID of the NFT being sold
+  const [isMinting, setIsMinting] = useState(false); // Flag to indicate if an NFT is being minted
   const [offeredAddress, setOfferedAddress] = useState<string | undefined>(
     undefined
-  );
-  const [isOffering, setIsOffering] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
+  ); // Address the NFT is offered to
+  const [isOffering, setIsOffering] = useState(false); // Flag to indicate if an NFT is being offered
+  const [messageApi, contextHolder] = message.useMessage(); // Ant Design message API
 
+  // Function to display loading messages
   const openMessage = (key: string, message: string) => {
     messageApi.open({
       key,
@@ -37,6 +40,7 @@ export const Seller = () => {
     });
   };
 
+  // Function to close messages and display success/error messages
   const closeMessage = (
     key: string,
     type: "success" | "error",
@@ -49,6 +53,7 @@ export const Seller = () => {
     });
   };
 
+  // Function to generate a random string
   function generateRandomString(length: number) {
     const charset =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -62,8 +67,10 @@ export const Seller = () => {
     return randomString;
   }
 
+  // Algod client
   const algodClient = new algosdk.Algodv2(ALGOD_TOKEN, ALGOD_URL, ALGOD_PORT);
 
+  // Arc18 client
   const appCaller = new Arc18Client(
     {
       resolveBy: "id",
@@ -72,6 +79,7 @@ export const Seller = () => {
     algodClient
   );
   
+  // Function to create an Algorand account
   const createAccount = async () => {
     const key = generateRandomString(8);
     try {
@@ -89,6 +97,7 @@ export const Seller = () => {
     }
   };
 
+  // Function to transfer test tokens to an account
   const transferTestTokens = async (reciever: string) => {
     const mastet_private = import.meta.env
       .VITE_MASTER_WALLET_MNEMONIC as string;
@@ -109,6 +118,7 @@ export const Seller = () => {
     );
   };
 
+  // Function to refresh the balance of the current account
   const refreshBalance = async () => {
     if (account) {
       const accountInfo = await algodClient
@@ -118,6 +128,7 @@ export const Seller = () => {
     }
   };
 
+  // Function to refresh the balance of a given account
   const refreshBalanceOfAccount = async (account: algosdk.Account) => {
     if (account) {
       const accountInfo = await algodClient
@@ -127,6 +138,7 @@ export const Seller = () => {
     }
   };
 
+  // Component to display a list of key-value pairs
   const ShowList = ({
     title,
     listData,
@@ -149,6 +161,7 @@ export const Seller = () => {
     );
   };
 
+  // Function to mint an NFT
   const mintNFT = async (account: algosdk.Account) => {
     const key = generateRandomString(8);
     setIsMinting(true);
@@ -186,8 +199,10 @@ export const Seller = () => {
     }
   };
 
+  // Ref for input field
   const addressref = useRef<InputRef>(null);
 
+  // Function to place an order
   const placeOrder = async (account: algosdk.Account, assetId: number) => {
     const key = generateRandomString(8);
     if (addressref.current?.input) {
@@ -222,8 +237,10 @@ export const Seller = () => {
       }
     }
   };
+  // JSX rendering
   return (
     <div className="Main">
+      {/* Steps component */}
       <Steps
         current={current}
         items={[
@@ -242,6 +259,7 @@ export const Seller = () => {
         ]}
       />
 
+      {/* Account creation step */}
       {current === 0 && (
         <div className="section">
           <div className="center">
@@ -283,6 +301,7 @@ export const Seller = () => {
         </div>
       )}
 
+      {/* Mint NFT step */}
       {current === 1 && account && balance > 0 && (
         <div className="section">
           {account && (
@@ -330,6 +349,7 @@ export const Seller = () => {
         </div>
       )}
 
+      {/* Place order step */}
       {current === 2 && account && balance > 0 && assetId && (
         <div className="section">
           {account && (
@@ -382,6 +402,7 @@ export const Seller = () => {
           )}
         </div>
       )}
+      {/* Message context holder */}
       {contextHolder}
     </div>
   );

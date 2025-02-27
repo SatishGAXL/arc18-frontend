@@ -7,15 +7,22 @@ const { Content } = Layout;
 
 function App() {
   return (
+    // Router setup
     <Router>
+      {/* Navigation links */}
       <div className="Nav">
         <NavLink to="/seller">Seller</NavLink>
         <NavLink to="/buyer">Buyer</NavLink>
       </div>
+      {/* Layout component */}
       <Layout>
+        {/* Content area */}
         <Content style={{backgroundColor:"white"}}>
+          {/* Routes configuration */}
           <Routes>
+            {/* Seller route */}
             <Route path="/seller" element={<Seller />} />
+            {/* Buyer route */}
             <Route path="/buyer" element={<Buyer />} />
           </Routes>
         </Content>

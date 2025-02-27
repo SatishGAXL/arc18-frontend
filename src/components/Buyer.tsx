@@ -15,17 +15,20 @@ import {
   MASTER_WALLET_MNEMONIC,
 } from "./config";
 
+// Buyer component
 export const Buyer = () => {
-  const [current, setCurrent] = useState(0);
+  // State variables
+  const [current, setCurrent] = useState(0); // Current step in the buying process
   const [account, setAccount] = useState<algosdk.Account | undefined>(
     undefined
-  );
-  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  ); // Algorand account of the buyer
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false); // Flag to indicate if an account is being created
 
-  const [balance, setBalance] = useState<number>(0);
+  const [balance, setBalance] = useState<number>(0); // Balance of the buyer's account
 
-  const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage(); // Ant Design message API
 
+  // Function to display error messages
   const error = (msg: string) => {
     messageApi.open({
       type: "error",
@@ -33,6 +36,7 @@ export const Buyer = () => {
     });
   };
 
+  // Function to display loading messages
   const openMessage = (key: string, message: string) => {
     messageApi.open({
       key,
@@ -42,6 +46,7 @@ export const Buyer = () => {
     });
   };
 
+  // Function to close messages and display success/error messages
   const closeMessage = (
     key: string,
     type: "success" | "error",
@@ -54,6 +59,7 @@ export const Buyer = () => {
     });
   };
 
+  // Function to generate a random string
   function generateRandomString(length: number) {
     const charset =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -67,8 +73,10 @@ export const Buyer = () => {
     return randomString;
   }
 
+  // Algod client
   const algodClient = new algosdk.Algodv2(ALGOD_TOKEN, ALGOD_URL, ALGOD_PORT);
 
+  // Arc18 client
   const appCaller = new Arc18Client(
     {
       resolveBy: "id",
@@ -77,6 +85,7 @@ export const Buyer = () => {
     algodClient
   );
 
+  // Function to create an Algorand account
   const createAccount = async () => {
     const key = generateRandomString(8);
     openMessage(key, "Creating Account..");
@@ -94,6 +103,7 @@ export const Buyer = () => {
     }
   };
 
+  // Function to refresh the balance of the current account
   const refreshBalance = async () => {
     if (account) {
       const accountInfo = await algodClient
@@ -103,6 +113,7 @@ export const Buyer = () => {
     }
   };
 
+  // Function to refresh the balance of a given account
   const refreshBalanceOfAccount = async (account: algosdk.Account) => {
     if (account) {
       const accountInfo = await algodClient
@@ -112,6 +123,7 @@ export const Buyer = () => {
     }
   };
 
+  // Component to display a list of key-value pairs
   const ShowList = ({
     title,
     listData,
@@ -134,23 +146,26 @@ export const Buyer = () => {
     );
   };
 
-  const [assetId, setAssetId] = useState<number | undefined>(undefined);
-  const [offeredTo, setofferedTo] = useState<string | undefined>(undefined);
-  const [offeredFrom, setofferedFrom] = useState<string | undefined>(undefined);
+  // State variables for offer details
+  const [assetId, setAssetId] = useState<number | undefined>(undefined); // Asset ID of the NFT being offered
+  const [offeredTo, setofferedTo] = useState<string | undefined>(undefined); // Address the offer is made to
+  const [offeredFrom, setofferedFrom] = useState<string | undefined>(undefined); // Address the offer is made from
   const [offeredAmount, setOfferedAmount] = useState<number | undefined>(
     undefined
-  );
+  ); // Amount of the NFT being offered
   const [royaltyRecipient, setRoyaltyRecipient] = useState<string | undefined>(
     undefined
-  );
+  ); // Address of the royalty recipient
   const [royaltyPercent, setRoyaltyPercent] = useState<number | undefined>(
     undefined
-  );
-  const [isFetchingOffer, setIsFetchingOffer] = useState<boolean>(false);
+  ); // Royalty percentage
+  const [isFetchingOffer, setIsFetchingOffer] = useState<boolean>(false); // Flag to indicate if the offer is being fetched
 
+  // Refs for input fields
   const addressref = useRef<InputRef>(null);
   const assetref = useRef<InputRef>(null);
 
+  // Function to fetch the offer details
   const fetchOffer = async () => {
     if (account) {
       const key = generateRandomString(8);
@@ -219,6 +234,7 @@ export const Buyer = () => {
     }
   };
 
+  // State variables for balances before buying
   const [
     beforeBuyRoyaltyRecipientBalance,
     setBeforeBuyRoyaltyRecipientBalance,
@@ -232,6 +248,7 @@ export const Buyer = () => {
   const [isFetchingBeforeBalances, setIsFetchingBeforeBalances] =
     useState<boolean>(false);
 
+  // Function to fetch balances before buying
   const fetchBeforeBalances = async () => {
     try {
       setIsFetchingBeforeBalances(true);
@@ -262,8 +279,11 @@ export const Buyer = () => {
     }
   };
 
+  // Ref for amount input
   const amountref = useRef<InputRef>(null);
-  const [isBuying, setIsBuying] = useState<boolean>(false);
+  const [isBuying, setIsBuying] = useState<boolean>(false); // Flag to indicate if the offer is being bought
+
+  // Function to buy the offer
   const buyOffer = async (
     account: algosdk.Account,
     assetId: number,
@@ -328,6 +348,7 @@ export const Buyer = () => {
     }
   };
 
+  // State variables for balances after buying
   const [afterBuyRoyaltyRecipientBalance, setAfterBuyRoyaltyRecipientBalance] =
     useState<string | undefined>(undefined);
   const [afterBuySellerBalance, setAfterBuySellerBalance] = useState<
@@ -337,6 +358,7 @@ export const Buyer = () => {
     string | undefined
   >(undefined);
 
+  // Function to fetch balances after buying
   const fetchAfterBalances = async () => {
     if (
       account &&
@@ -395,6 +417,7 @@ export const Buyer = () => {
     }
   };
 
+  // Function to transfer test tokens to an account
   const transferTestTokens = async (reciever: string) => {
     const account = algosdk.mnemonicToSecretKey(MASTER_WALLET_MNEMONIC);
     const suggestedParams = await algodClient.getTransactionParams().do();
@@ -413,12 +436,15 @@ export const Buyer = () => {
     );
   };
 
+  // Function to round a number to a specific scale
   const roundwithScale = (num: number, scale: number) => {
     return Math.round((num + Number.EPSILON) * 10 ** scale) / 10 ** scale;
   };
 
+  // JSX rendering
   return (
     <div className="Main">
+      {/* Steps component */}
       <Steps
         current={current}
         items={[
@@ -437,6 +463,7 @@ export const Buyer = () => {
         ]}
       />
 
+      {/* Account creation step */}
       {current === 0 && (
         <div className="section">
           <div className="center">
@@ -478,6 +505,7 @@ export const Buyer = () => {
         </div>
       )}
 
+      {/* Order details step */}
       {current === 1 && account && balance > 0 && (
         <div className="section">
           {account && (
@@ -584,6 +612,7 @@ export const Buyer = () => {
         </div>
       )}
 
+      {/* Buy order step */}
       {current === 2 &&
         account &&
         balance > 0 &&
@@ -747,6 +776,7 @@ export const Buyer = () => {
           </div>
         )}
 
+      {/* Message context holder */}
       {contextHolder}
     </div>
   );
